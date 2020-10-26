@@ -50,15 +50,6 @@ sema_init (struct semaphore *sema, unsigned value)
   list_init (&sema->waiters);
 }
 
-void
-sema_init_name (struct semaphore *sema, unsigned value, const char *name)
-{
-  ASSERT (sema != NULL);
-  sema->value = value;
-  strlcpy(sema->name, name, strlen(name)+1);
-  list_init(&sema->waiters);
-}
-
 /* Down or "P" operation on a semaphore.  Waits for SEMA's value
    to become positive and then atomically decrements it.
 
@@ -123,7 +114,8 @@ sema_up (struct semaphore *sema)
 
   old_level = intr_disable ();
   if (!list_empty (&sema->waiters)) 
-    thread_unblock (list_entry (list_pop_front (&sema->waiters), struct thread, elem));
+    thread_unblock (list_entry (list_pop_front (&sema->waiters),
+                                struct thread, elem));
   sema->value++;
   intr_set_level (old_level);
 }
@@ -186,15 +178,6 @@ lock_init (struct lock *lock)
   ASSERT (lock != NULL);
 
   lock->holder = NULL;
-  strlcpy(lock->name, "noname", sizeof("noname"));
-  sema_init (&lock->semaphore, 1);
-}
-
-void lock_init_name (struct lock *lock, const char *name)
-{
-  ASSERT (lock != NULL);
-  lock->holder = NULL;
-  strlcpy(lock->name, name, strlen(name) +1);
   sema_init (&lock->semaphore, 1);
 }
 
