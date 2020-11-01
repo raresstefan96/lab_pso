@@ -93,6 +93,7 @@ struct thread
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
 
+
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
     uint32_t *pagedir;                  /* Page directory. */
@@ -103,10 +104,12 @@ struct thread
 
     /* Thread priority -> recalculated every 4 clock ticks for the MLFQ scheduler */
     int           priority;
-    int           nice;
 
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
+
+    int nice ; 
+    fixed_point_t recent_cpu_time; 
   };
 
 /* If false (default), use round-robin scheduler.
